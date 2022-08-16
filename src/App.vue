@@ -1,34 +1,42 @@
 
 
 <template>
-  <h2>Github Profiles</h2>
-  <input type="text" placeholder="Github Username" v-model="username" @keyup.enter="getUser">
-  <button @click="getUser">Search</button>
-  
-  <div class="row">
-    <div class="column" style="background-color:#aaa;">
-      <section v-if="loading">
-        <img src="./assets/ajax.gif" alt="">
-      </section>
-      <section v-else>
-        <img :src="avatar" alt="" width="150" id="avatar">
-        <div>
-          <ul class="profile-info">
-            <li>Name: {{ name }}</li>
-            <li>Username: {{ username }}</li>
-            <li>Followers: {{ followers }}</li>
-            <li>Repositories count: {{ public_repos }}</li>
-          </ul>
-        </div>   
-      </section>         
-    </div>
-    <div class="column" style="background-color:#bbb;">
-      <h2>Newest Repositories:</h2>
-      <ul>
-        <li v-for="repo in repos">
-          <a :href="`${repo.html_url}`" target="_blank">{{ repo.name }}</a>
-        </li>
-      </ul>
+  <div id="container" :class="{ dark: isDarkMode }">
+    <!-- Rounded switch -->
+    <h2>Mode: {{ lightDark }}</h2>
+    <label class="switch">
+      <input type="checkbox" v-model="isDarkMode">
+      <span class="slider round"></span>
+    </label>
+    <h2>Github Profiles</h2>
+    <input type="text" placeholder="Github Username" v-model="username" @keyup.enter="getUser">
+    <button @click="getUser">Search</button>
+    
+    <div class="row" :class="isDarkMode && dark">
+      <div class="column" style="background-color:#aaa;">
+        <section v-if="loading">
+          <img src="./assets/ajax.gif" alt="">
+        </section>
+        <section v-else>
+          <img :src="avatar" alt="" width="150" id="avatar">
+          <div>
+            <ul class="profile-info">
+              <li>Name: {{ name }}</li>
+              <li>Username: {{ username }}</li>
+              <li>Followers: {{ followers }}</li>
+              <li>Repositories count: {{ public_repos }}</li>
+            </ul>
+          </div>   
+        </section>         
+      </div>
+      <div class="column" style="background-color:#bbb;">
+        <h2>Newest Repositories:</h2>
+        <ul>
+          <li v-for="repo in repos">
+            <a :href="`${repo.html_url}`" target="_blank">{{ repo.name }}</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -43,12 +51,34 @@
         followers: 0,
         public_repos: 0,
         repos: [],
-        loading: false
+        loading: false,
+        isDarkMode: true
+      }
+    },
+    mounted() {
+      if (localStorage.isDarkMode) {
+        this.isDarkMode = localStorage.isDarkMode;
+        if (this.isDarkMode) {
+          document.getElementById("container").classList.add('dark');
+        } else {
+          document.getElementById("container").classList.remove('dark');
+        }
+      }
+    },
+    watch: {
+      isDarkMode: {
+        handler(newIsDarkMode) {
+          localStorage.isDarkMode = newIsDarkMode;
+          console.log("isdark: " , localStorage.isDarkMode)
+        }
       }
     },
     computed: {
         avatar() {
           return this.avatar_url || "./src/assets/profile-placeholder.png";
+        },
+        lightDark() {
+          return this.isDarkMode ? "Dark" : "Light"
         }
     },
     methods: {
@@ -91,6 +121,15 @@
 </script>
 
 <style scoped>
+
+#container {
+  border: 1px solid black;
+  padding: 35px
+}
+.dark {
+  background-color: slategray;
+}
+
 li {
   text-align: left;
   font-weight: bold;
@@ -131,5 +170,69 @@ li {
   content: "";
   display: table;
   clear: both;
+}
+
+/* Slider css */
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 </style>
