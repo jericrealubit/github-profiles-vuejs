@@ -56,26 +56,18 @@
       }
     },
     mounted() {
-      if (localStorage.isDarkMode) {
-        this.isDarkMode = localStorage.isDarkMode;
-        if (this.isDarkMode) {
-          document.getElementById("container").classList.add('dark');
-        } else {
-          document.getElementById("container").classList.remove('dark');
-        }
-      }
+      this.isDarkMode = (localStorage.isDarkMode) ? JSON.parse(localStorage.isDarkMode) : true;
     },
     watch: {
       isDarkMode: {
         handler(newIsDarkMode) {
           localStorage.isDarkMode = newIsDarkMode;
-          console.log("isdark: " , localStorage.isDarkMode)
         }
       }
     },
     computed: {
         avatar() {
-          return this.avatar_url || "./src/assets/profile-placeholder.png";
+          return this.avatar_url || "https://www.pngitem.com/pimgs/m/30-307416_profile-icon-png-image-free-download-searchpng-employee.png";
         },
         lightDark() {
           return this.isDarkMode ? "Dark" : "Light"
