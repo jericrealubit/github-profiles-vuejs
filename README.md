@@ -1,5 +1,6 @@
+### URL: https://github-profiles-vue.netlify.app/
+
 A simple Github Profile Viewer:
-https://github-profiles-vue.netlify.app/
 
 # Vue 3 + Vite
 
